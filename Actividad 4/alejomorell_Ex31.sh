@@ -1,15 +1,33 @@
 #/bin/bash
-sudo df | grep -E '((/dev/sd)|(/dev/nvme))' > devices.mounted #Extraemos los dispositivos de almacenamiento
+if [ $# != 1 ] #Comprobamos que el numero de parametros introducidos es correcto
+then
+    echo    "Has introducido un numero correcto de argumentos"
+    exit
+fi
+re='^[0-9]+$'
+if ! [[ $1 =~ $re ]] ; then #Comprobamos que al menos es un numero
+   echo "No has introducido un numero o has introducido un numero incorrecto"
+   exit
+fi
+df | grep -E '((/dev/sd)|(/dev/nvme))' | sed 's/|/ /' | awk '{print $1}' > devices.mounted #Extraemos los dispositivos de almacenamiento
 echo "Presiona [CTRL+C] para detener"
 while : #Entramos en bucle indefinido
 do
-    sleep $1
-    sudo df | grep -E '((/dev/sd)|(/dev/nvme))' > newdevices.mounted #Igual que antes
-    diff newdevices.mounted devices.mounted | grep + > newtrue.mounted #Comparamos si hay alguna diferencia entre los ficheros
-    if [ -s "newtrue.mounted" ] #En caso de que se encuentre una diferencia se imprime el resultado 
+    
+    df | grep -E '((/dev/sd)|(/dev/nvme))' | sed 's/|/ /' | awk '{print $1}' > newdevices.mounted #Igual que antes, pero con otro fichero
+    str=`diff newdevices.mounted devices.mounted | grep '<'`
+    str=`echo ${str:2:${#str}}`
+    #Comparamos si hay alguna diferencia entre los ficheros y agregamos la diferencia a str
+    if [ "$str" != '' ] #En caso de que se encuentre una diferencia se imprime el resultado 
     then
-        echo "Algo ha sido montado `echo newtrue.mounted`"
-        exit 1
+        echo "Algo ha sido montado"
+        echo `df | grep $str`
+        ls `df | grep $str | awk '{print $6}'`
+        break
     fi
-    echo newdevices.mounted > devices.mounted #En caso de que no hayan habido cambios se reemplaza el contenido de devices.mounted por el que era nuevo y ya no lo es	
+    sleep $1	
 done
+
+#Cuando se acaba el script se borran los archivos temporales
+rm devices.mounted
+rm newdevices.mounted
