@@ -25,7 +25,6 @@ do
         if [ $i -ge $2 ]
         then
             echo "Dispositivo: `cat dev.usage | grep $(echo "$i%") | awk '{print $1}'`, utilización: `cat dev.usage | grep $(echo "$i%") | awk '{print $5}'`, punto de montaje: `cat dev.usage | grep $(echo "$i%") | awk '{print $6}'` "
-            exit
         fi        
     done < devper.usage  
 done
