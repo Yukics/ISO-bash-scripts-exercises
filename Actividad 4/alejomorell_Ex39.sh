@@ -19,12 +19,13 @@ while : #Entramos en bucle indefinido
 do   
     sleep $1 #Cada N lo revisa
     df | grep -E '((/dev/sd)|(/dev/nvme))' > dev.usage #Extraemos la info de los discos 
-    cat dev.usage | sed 's/%//' | awk '{print $5}' | tee devper.usage
+    cat dev.usage | sed 's/%//' | awk '{print $5}' | tee devper.usage > /dev/null #Creo otro fichero solo con los numeros de los porcentajes, así se entiende mejor el proceso
 
-    while read i; do
+    while read i; do #Leo cada linea del fichero anterior y busco coincidencias con el parametro especificado, en caso de que se cumpla la condición imprime el dispositivo, su utilización y punto de montaje
         if [ $i -ge $2 ]
         then
-            echo "`cat dev.usage | grep $i`"
+            echo "`cat dev.usage | grep $(echo "$i%")`"
+            exit
         fi        
     done < devper.usage  
 done
