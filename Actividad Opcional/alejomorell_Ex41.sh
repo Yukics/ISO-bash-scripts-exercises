@@ -17,7 +17,7 @@ if ! [[ $2 =~ $re ]] ; then #Comprobamos que al menos es un numero
 fi
 
 
-ls -l $1 | tail -n +2 > listadir.txt #Salida de lo que se encuentre en el primer nivel del directorio pasado por parametro en modo lista la cual iremos recorriendo en el bucle
+ls -l $1 | tail -n +1 > listadir.txt #Salida de lo que se encuentre en el primer nivel del directorio pasado por parametro en modo lista la cual iremos recorriendo en el bucle
 > exercisi.log #Vaciamos el log
 
 while read line; do #Leo cada linea del fichero anterior
