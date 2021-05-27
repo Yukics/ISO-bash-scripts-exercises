@@ -11,7 +11,7 @@
 if ! [ $# -eq 2 ] #Comprobamos que le numero de parametros es correcto
 then
 	echo "Numero de parametros erroneo, se necesitan dos, un fichero con la ruta de un directorio y un nombre de archivo"
-    exit
+    exit 1
 fi
 if ! [ -f `echo $1` ] #Comprobamos que el primer fichero pasado por parametro existe
 then
